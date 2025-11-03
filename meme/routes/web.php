@@ -8,6 +8,10 @@ Route::get('/', function () {
 
 Route::post('/prispevky', [PrispevekController::class, 'store'])->name('prispevky.store');
 
+Route::post('/prispevky/{prispevek}/like', [PrispevekController::class, 'like'])->name('prispevky.like');
+
+Route::get('/', [PrispevekController::class, 'index'])->name('welcome');
+
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),

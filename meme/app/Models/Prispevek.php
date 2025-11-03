@@ -7,5 +7,20 @@ class Prispevek extends Model
     public $timestamps = false;
     protected $fillable = ['fotka', 'id_uzivatel'];
     
-        protected $table = 'prispevek';
+    protected $table = 'prispevek';
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'id_uzivatel');
+    }
+
+    public function likes()
+    {
+        return $this->hasMany(Like::class);
+    }
+
+    public function isLikedByUser($userId)
+    {
+        return $this->likes()->where('id_uzivatel', $userId)->exists();
+    }
 }
