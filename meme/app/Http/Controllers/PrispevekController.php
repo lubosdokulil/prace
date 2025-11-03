@@ -26,7 +26,8 @@ class PrispevekController extends Controller
 
     public function index()
     {
-        $prispevky = Prispevek::with('user')->get();
+        // načíst příspěvky s autorem a komentáři (včetně autorů komentářů)
+        $prispevky = Prispevek::with(['user', 'comments.user'])->get();
         return view('welcome', compact('prispevky'));
     }
 
@@ -49,5 +50,26 @@ class PrispevekController extends Controller
     $prispevek->increment('lajky');
 
     return redirect()->back()->with('success', 'Příspěvek byl úspěšně olajkován');
-}
+    }
+    
+    public function commentStore(Request $request, $id)
+    {
+        $request->validate([
+            'text' => 'required|string|max:1000'
+        ]);
+
+        $prispevek = Prispevek::findOrFail($id);
+
+        // musí být přihlášený uživatel
+        if (!auth()->check()) {
+            return redirect()->route('login');
+        }
+
+        $prispevek->comments()->create([
+            'text' => $request->input('text'),
+            'id_uzivatel' => auth()->id()
+        ]);
+
+        return redirect()->back()->with('success', 'Komentář byl přidán');
+    }
 }

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('komentar', function (Blueprint $table) {
             $table->id();
             $table->integer('id_uzivatel');
+            $table->integer('prispevek_id');
             $table->string('text');
         });
     }

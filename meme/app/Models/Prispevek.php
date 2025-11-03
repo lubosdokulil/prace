@@ -23,4 +23,9 @@ class Prispevek extends Model
     {
         return $this->likes()->where('id_uzivatel', $userId)->exists();
     }
+
+    public function comments()
+    {
+        return $this->hasMany(Komentar::class, 'prispevek_id');
+    }
 }

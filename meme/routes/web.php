@@ -10,6 +10,10 @@ Route::post('/prispevky', [PrispevekController::class, 'store'])->name('prispevk
 
 Route::post('/prispevky/{prispevek}/like', [PrispevekController::class, 'like'])->name('prispevky.like');
 
+Route::post('/prispevky/{prispevek}/komentar', [PrispevekController::class, 'commentStore'])
+    ->middleware('auth')
+    ->name('prispevky.comment');
+
 Route::get('/', [PrispevekController::class, 'index'])->name('welcome');
 
 Route::middleware([

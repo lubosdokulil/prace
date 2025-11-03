@@ -96,7 +96,43 @@
     @endauth
     <span class="text-gray-600">{{ $prispevek->lajky }} lajků</span>
 </div>
-                                <p><strong>ID komentáře:</strong> {{ $prispevek->id_komentar ?? 'Žádný komentář' }}</p>
+                                <!-- sekce komentářů -->
+<div class="mt-4">
+    <h4 class="font-semibold mb-2">Komentáře</h4>
+
+    <!-- výpis komentářů -->
+    @if($prispevek->comments && $prispevek->comments->count())
+        <div class="space-y-3 mb-3">
+            @foreach($prispevek->comments as $komentar)
+                <div class="border rounded p-3 bg-gray-50">
+                    <p class="text-sm text-gray-700"><strong>{{ $komentar->user->name ?? 'Smazaný uživatel' }}</strong> <span class="text-xs text-gray-500">• {{ $komentar->created_at->diffForHumans() }}</span></p>
+                    <p class="mt-1 text-gray-800">{{ $komentar->text }}</p>
+                </div>
+            @endforeach
+        </div>
+    @else
+        <p class="text-sm text-gray-500 mb-3">Zatím žádné komentáře.</p>
+    @endif
+
+    <!-- formulář pro přidání komentáře -->
+    @auth
+        <form method="POST" action="{{ route('prispevky.comment', $prispevek->id) }}">
+            @csrf
+            <div>
+                <textarea name="text" rows="2" class="w-full border rounded p-2" placeholder="Napište komentář..." required></textarea>
+                @error('text') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @enderror
+            </div>
+            <div class="mt-2 text-right">
+                <button type="submit" 
+                    class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition duration-150 ease-in-out">
+                    Přidat komentář
+                </button>
+            </div>
+        </form>
+    @else
+        <p class="text-sm text-gray-600">Pro přidání komentáře se prosím <a href="{{ route('login') }}" class="underline text-blue-600">přihlaste</a>.</p>
+    @endauth
+</div>
                             </div>
                         @endforeach
                     </div>
