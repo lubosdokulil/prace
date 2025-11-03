@@ -47,21 +47,30 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
                 <h3>Nahrát nový příspěvek</h3>
-                 <form method="POST" action="{{ route('prispevky.store') }}" enctype="multipart/form-data">
-                    @csrf
-                    <div class="mb-4">
-                        <label for="fotka" class="block text-gray-700">Nahrát fotku:</label>
-                        <input type="file" 
-                            name="fotka" 
-                            id="fotka" 
-                            accept="image/*"
-                            required 
-                            class="mt-1 block w-full">
+               @auth
+                  <form method="POST" action="{{ route('prispevky.store') }}" enctype="multipart/form-data">
+                        @csrf
+                        <div class="mb-4">
+                            <label for="fotka" class="block text-gray-700">Nahrát fotku:</label>
+                            <input type="file"
+                                  name="fotka"
+                                  id="fotka"
+                               accept="image/*"
+                                  required
+                                  class="mt-1 block w-full">
+                       </div>
+                       <div>
+                            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Odeslat</button>
+                        </div>
+                   </form>
+              @else
+                    <div class="p-4 bg-yellow-50 border border-yellow-200 rounded">
+                       Pro nahrání příspěvku se prosím <a href="{{ route('login') }}" class="text-blue-600 underline">přihlaste</a>.
+                       @if(Route::has('register'))
+                            Nebo se <a href="{{ route('register') }}" class="text-blue-600 underline">zaregistrujte</a>.
+                        @endif
                     </div>
-                    <div>
-                        <button type="submit">Odeslat</button>
-                    </div>
-                </form>
+               @endauth
             </div>
             <div class="grid gap-4">
                         @foreach($prispevky as $prispevek)
