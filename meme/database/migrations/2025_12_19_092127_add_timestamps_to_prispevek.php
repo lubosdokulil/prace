@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('uzivatel', function (Blueprint $table) {
-            $table->id();
-            $table->string('jmeno', 16);
+        Schema::table('prispevek', function (Blueprint $table) {
+            $table->timestamps();
         });
     }
 
@@ -22,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('uzivatel');
+        Schema::table('prispevek', function (Blueprint $table) {
+            $table->dropTimestamps();
+        });
     }
 };

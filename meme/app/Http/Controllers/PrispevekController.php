@@ -25,33 +25,45 @@ class PrispevekController extends Controller
     }
 
     public function index()
-    {
-        // načíst příspěvky s autorem a komentáři (včetně autorů komentářů)
-        $prispevky = Prispevek::with(['user', 'comments.user'])->get();
-        return view('welcome', compact('prispevky'));
-    }
 
+    {
+
+        //nacteni prispevku s uzivatelem a komentari
+
+        $prispevky = Prispevek::with(['user', 'comments.user'])->get();
+
+        return view('welcome', compact('prispevky'));
+
+    }
 
     public function like($id)
     {   
-    $prispevek = Prispevek::findOrFail($id);
-    
-    // Kontrola, zda uživatel již lajknul
-    if ($prispevek->isLikedByUser(auth()->id())) {
-        return redirect()->back()->with('error', 'Již jste tento příspěvek lajknuli');
-    }
+        $prispevek = Prispevek::findOrFail($id);
+        $userId = auth()->id();
 
-    // Vytvoření lajku
-    $prispevek->likes()->create([
-        'id_uzivatel' => auth()->id()
-    ]);
+        //kontrola jestli to uzivatel lajknul
+        $existingLike = $prispevek->likes()->where('id_uzivatel', $userId)->first();
     
-    // Increment lajků
-    $prispevek->increment('lajky');
+        if ($existingLike) {
+            //odebrani lajku
+            $existingLike->delete();            //smaze zaznam v tabulce
+            $prispevek->decrement('lajky');     //snizi cislo
+            
+            $message = 'Lajk byl odebrán.';
+        } else {
+            //lajknuti prispevku
+            $prispevek->likes()->create([
+                'id_uzivatel' => $userId
+            ]);
+            $prispevek->increment('lajky');
+            
+            $message = 'Příspěvek byl úspěšně olajkován.';
+        }
 
-    return redirect()->back()->with('success', 'Příspěvek byl úspěšně olajkován');
+        return redirect()->back()->with('success', $message);
     }
     
+    //komentare
     public function commentStore(Request $request, $id)
     {
         $request->validate([
@@ -60,7 +72,7 @@ class PrispevekController extends Controller
 
         $prispevek = Prispevek::findOrFail($id);
 
-        // musí být přihlášený uživatel
+        //kontrola prihlaseni
         if (!auth()->check()) {
             return redirect()->route('login');
         }
