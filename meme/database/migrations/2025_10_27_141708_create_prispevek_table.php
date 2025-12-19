@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer('id_uzivatel');
             $table->string('fotka');
-            $table->integer('lajky');
+            $table->integer('lajky')->default(0);
             $table->integer('id_komentar');
         });
     }
